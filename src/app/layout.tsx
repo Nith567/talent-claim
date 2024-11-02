@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
-
+import { Navigation } from "@/components/Navigation";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Some App",
-  description: "This app does something",
+  title: "Talent-Claim",
+  description:
+    "Talent Claim leverages developers to claim their credentials based on Score",
   icons: ["/logo/logo-dark.png"],
 };
 
@@ -19,8 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} dark:bg-black`}>
-        <Providers>{children}</Providers>
+      <body className={`${inter.className}`}>
+        <Providers>
+          <Navigation />
+          {children}
+        </Providers>
       </body>
     </html>
   );
