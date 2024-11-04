@@ -25,17 +25,22 @@ const app = new Frog({
 
 app.frame("/score", async (c) => {
   const { buttonValue, inputText, status } = c;
+  const body = await c.req.json();
+  const validation = await getFrameMessage(body, {
+    neynarApiKey: process.env.NEXT_PUBLIC_NEYNAR_API_KEY,
+  });
+  const mainAddress = validation?.message?.interactor.verified_accounts[0];
 
   return c.res({
     action: "/build",
     image: (
       <div style={{ color: "white", display: "flex", fontSize: 60 }}>
-        builderscore
+        {mainAddress}
       </div>
     ),
     intents: [
       <Button key="sign" action="/sign">
-        sco
+        scosdfds
       </Button>,
     ],
   });
