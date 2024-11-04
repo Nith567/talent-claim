@@ -22,16 +22,18 @@ const app = new Frog({
 });
 //localhost:3000/api/talentscore-frame/apikey_421614_1038
 
-app.frame("/", async (c) => {
+app.frame("/score", async (c) => {
   const { buttonValue, inputText, status } = c;
-  const { frameData } = c;
-  console.log("address ", frameData?.address);
+  const body: FrameRequest = await c.req.json();
+  console.log(process.env.NEXT_PUBLIC_NEYNAR_API_KEY);
   const body: FrameRequest = await c.req.json();
   const { isValid, message } = await getFrameMessage(body, {
-    neynarApiKey: process.env.NEXT_PUBLIC_NEYNAR_API_KEY,
+    neynarApiKey: process.env.NEYNAR_API,
   });
+
   const wallets = message?.interactor.verified_accounts;
-  console.log("so wallets", wallets);
+  console.log(wallets);
+
   return c.res({
     action: "/passport",
     image: (
@@ -41,7 +43,7 @@ app.frame("/", async (c) => {
     ),
     intents: [
       <Button key="sign" action="/sign">
-        score
+        sco
       </Button>,
     ],
   });
@@ -110,6 +112,7 @@ app.frame("/talentscore-frame/:table", async (c) => {
 });
 
 app.frame("/fetch-secret", (c) => {
+  console.log("fetching secret");
   return c.res({
     action: "/finish",
     image: (
