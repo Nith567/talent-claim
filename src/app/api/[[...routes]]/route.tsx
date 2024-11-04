@@ -2,11 +2,13 @@
 
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
-import { neynar } from "frog/hubs";
+// import { neynar } from "frog/hubs";
+import { neynar } from "frog/middlewares";
 import { handle } from "frog/next";
 import { serveStatic } from "frog/serve-static";
 import { tableApi } from "../../../../utils/table";
 import { NextResponse } from "next/server";
+import { getAddressFromUserData } from "../../../../utils/address";
 import {
   FrameRequest,
   getFrameHtmlResponse,
@@ -14,16 +16,79 @@ import {
 } from "@coinbase/onchainkit";
 import axios from "axios";
 import { fetchCredentialScore } from "../../../../utils/talentApi";
+import { farcasterDataFrogMiddleware } from "@airstack/frames";
+const farcasterDataMiddleware = farcasterDataFrogMiddleware({
+  apiKey: process.env.AIRSTACK_API_KEY || "18e5882bb4bf142b680a7f5",
+  features: {
+    userDetails: {},
+  },
+  env: "dev",
+});
+
+interface UserDetails {
+  profileName?: string | null;
+  fnames?: (string | null)[] | null;
+  userAssociatedAddresses?: string[] | null;
+  followerCount?: number | null;
+  followingCount?: number | null;
+  profileImage?: {
+    extraSmall?: string;
+    small?: string;
+    medium?: string;
+    large?: string;
+    original?: string;
+  } | null;
+  connectedAddresses?: {
+    address: string;
+    blockchain: string;
+    chainId: string;
+    timestamp: string;
+  }[];
+}
 
 const app = new Frog({
-  title: "sign app",
   basePath: "/api",
+  title: "talent Protocol",
+  hub: {
+    apiUrl: "https://hubs.airstack.xyz",
+    fetchOptions: {
+      headers: {
+        "x-airstack-hubs":
+          process.env.AIRSTACK_API_KEY || "18e5882bb4bf142b680a7f5",
+      },
+    },
+  },
   verify: "silent",
-  hub: neynar({ apiKey: process.env.NEXT_PUBLIC_NEYNAR_API_KEY as string }),
 });
+
 //localhost:3000/api/talentscore-frame/apikey_421614_1038
 
-app.frame("/score", async (c) => {
+app.frame("/score", farcasterDataMiddleware, async (c) => {
+  const userDetails = c.var?.userDetails as UserDetails;
+
+  const fid = c.frameData?.fid ?? null;
+
+  const ethAddress =
+    userDetails?.connectedAddresses?.find(
+      (addr: any) => addr.blockchain === "ethereum"
+    )?.address ??
+    userDetails?.connectedAddresses?.[0]?.address ??
+    null;
+  return c.res({
+    action: "`/score/${ethAddress}`",
+    image: (
+      <div style={{ color: "white", display: "flex", fontSize: 60 }}>
+        helloo morning
+      </div>
+    ),
+    intents: [
+      <Button key="sign" action="/sign">
+        SD
+      </Button>,
+    ],
+  });
+});
+app.frame("/score3", async (c) => {
   const { buttonValue, inputText, status } = c;
   const body = await c.req.json();
   const validation = await getFrameMessage(body, {
@@ -40,7 +105,7 @@ app.frame("/score", async (c) => {
     ),
     intents: [
       <Button key="sign" action="/sign">
-        scosdfds
+        scosdfdssdfsdf
       </Button>,
     ],
   });
@@ -245,45 +310,6 @@ app.frame("/finish", async (c) => {
   });
 });
 
-app.signature("/sign", (c) => {
-  return c.signTypedData({
-    chainId: "eip155:8453",
-    domain: {
-      name: "Ether Mail",
-      version: "1",
-      chainId: 1,
-      verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
-    },
-    types: {
-      Person: [
-        { name: "name", type: "string" },
-        { name: "wallet", type: "address" },
-        { name: "balance", type: "uint256" },
-      ],
-      Mail: [
-        { name: "from", type: "Person" },
-        { name: "to", type: "Person" },
-        { name: "contents", type: "string" },
-      ],
-    },
-    primaryType: "Mail",
-    message: {
-      from: {
-        name: "Cow",
-        wallet: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
-        //@ts-ignore
-        balance: 0n,
-      },
-      to: {
-        name: "Bob",
-        wallet: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
-        //@ts-ignore
-        balance: 1n,
-      },
-      contents: "Hello, Bob!",
-    },
-  });
-});
 devtools(app, { serveStatic });
 
 export const GET = handle(app);
