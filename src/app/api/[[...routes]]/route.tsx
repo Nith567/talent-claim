@@ -20,7 +20,6 @@ const app = new Frog({
   verify: "silent",
   hub: neynar({ apiKey: process.env.NEXT_PUBLIC_NEYNAR_API_KEY as string }),
 });
-
 //localhost:3000/api/talentscore-frame/apikey_421614_1038
 
 app.frame("/", async (c) => {
@@ -37,7 +36,7 @@ app.frame("/", async (c) => {
     action: "/passport",
     image: (
       <div style={{ color: "white", display: "flex", fontSize: 60 }}>
-        {wallets && wallets[0]}
+        builderscore
       </div>
     ),
     intents: [
