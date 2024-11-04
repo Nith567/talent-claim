@@ -37,7 +37,7 @@ app.frame("/", async (c) => {
     action: "/passport",
     image: (
       <div style={{ color: "white", display: "flex", fontSize: 60 }}>
-        builderscore
+        {wallets && wallets[0]}
       </div>
     ),
     intents: [
