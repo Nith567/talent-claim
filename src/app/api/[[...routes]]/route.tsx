@@ -13,6 +13,7 @@ import {
   getFrameMessage,
 } from "@coinbase/onchainkit";
 import axios from "axios";
+import { fetchCredentialScore } from "../../../../utils/talentApi";
 
 const app = new Frog({
   title: "sign app",
@@ -24,18 +25,9 @@ const app = new Frog({
 
 app.frame("/score", async (c) => {
   const { buttonValue, inputText, status } = c;
-  const body: FrameRequest = await c.req.json();
-  console.log(process.env.NEXT_PUBLIC_NEYNAR_API_KEY);
-  const body: FrameRequest = await c.req.json();
-  const { isValid, message } = await getFrameMessage(body, {
-    neynarApiKey: process.env.NEYNAR_API,
-  });
-
-  const wallets = message?.interactor.verified_accounts;
-  console.log(wallets);
 
   return c.res({
-    action: "/passport",
+    action: "/build",
     image: (
       <div style={{ color: "white", display: "flex", fontSize: 60 }}>
         builderscore
@@ -48,6 +40,7 @@ app.frame("/score", async (c) => {
     ],
   });
 });
+
 app.frame("/talentscore-frame/:table", async (c) => {
   const { buttonValue, inputText, status } = c;
   const secret = c.req.param("table");
@@ -179,8 +172,64 @@ app.frame("/passport", async (c) => {
     ],
   });
 });
+app.frame("/build", async (c) => {
+  const apiKey = process.env.NEXT_PUBLIC_TALENT_PROTOCOL_API_KEY;
+  const body: FrameRequest = await c.req.json();
+  console.log(process.env.NEXT_PUBLIC_NEYNAR_API_KEY);
+  const { isValid, message } = await getFrameMessage(body, {
+    neynarApiKey: process.env.NEXT_PUBLIC_NEYNAR_API_KEY,
+  });
+  const wallets = message?.interactor.verified_accounts;
+  console.log(wallets);
+  let res = fetchCredentialScore("0xa2a9055a014857d6c1e8f1bdd8682b6459c5fa85");
+  return c.res({
+    action: "/finish",
+    image: (
+      <div
+        style={{
+          display: "flex",
+          height: "100%",
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          backgroundImage: "linear-gradient(to bottom, #dbf4ff, #fff1f1)",
+          fontSize: 80,
+          fontWeight: 700,
+          textAlign: "center",
+        }}
+      >
+        {res}
+        <p
+          style={{
+            backgroundImage:
+              "linear-gradient(90deg, rgb(0, 124, 240), rgb(0, 223, 216))",
+            backgroundClip: "text",
+            color: "transparent",
+            fontSize: 80,
+            fontWeight: 700,
+            margin: 0,
+          }}
+        ></p>
+      </div>
+    ),
+    intents: [
+      <Button.Signature key={"finsih"} target="/sign">
+        Sign
+      </Button.Signature>,
+    ],
+  });
+});
 
-app.frame("/finish", (c) => {
+app.frame("/finish", async (c) => {
+  const apiKey = process.env.NEXT_PUBLIC_TALENT_PROTOCOL_API_KEY;
+  const body: FrameRequest = await c.req.json();
+  console.log(process.env.NEXT_PUBLIC_NEYNAR_API_KEY);
+  const { isValid, message } = await getFrameMessage(body, {
+    neynarApiKey: process.env.NEXT_PUBLIC_NEYNAR_API_KEY,
+  });
+  const wallets = message?.interactor.verified_accounts;
+  console.log(wallets);
   const { transactionId } = c;
   return c.res({
     image: (
