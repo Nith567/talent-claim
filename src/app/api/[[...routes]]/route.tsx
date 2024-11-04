@@ -42,8 +42,7 @@ app.frame("/", async (c) => {
     ),
     intents: [
       <Button key="sign" action="/sign">
-        sign {frameData?.address ?? "no address"}
-        {wallets ? wallets[0] || "no wallet" : "no wallet"}
+        score
       </Button>,
     ],
   });
