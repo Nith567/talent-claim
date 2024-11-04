@@ -1,5 +1,7 @@
 "use client";
 
+import { fetchCredentialScore } from "../../../utils/talentApi";
+import { useAccount } from "wagmi";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,49 +32,67 @@ type Secret = {
   type: "apikey" | "secret";
   minScore: number;
 };
+import {
+  type BaseError,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+} from "wagmi";
+import { parseEther } from "viem";
+import { useEthersSigner } from "@/lib/ethers";
+import { Database } from "@tableland/sdk";
+import { useRouter } from "next/navigation";
 
 export default function Component() {
+  const { address: userAddress } = useAccount();
+
   const [secrets, setSecrets] = useState<Secret[]>([]);
   const [newSecretName, setNewSecretName] = useState("");
   const [newSecretValue, setNewSecretValue] = useState("");
   const [newSecretType, setNewSecretType] = useState<"apikey" | "secret">(
     "apikey"
   );
-  const [newSecretMinScore, setNewSecretMinScore] = useState(0);
+  const [newSecretMinScore, setNewSecretMinScore] = useState(1);
   const [userScore, setUserScore] = useState(0);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    // Simulate fetching user's score. In a real app, this would be an API call.
-    setUserScore(Math.floor(Math.random() * 100));
-  }, []);
+  const signer = useEthersSigner();
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
+  const handleSubmit = async (e: React.FormEvent) => {
     if (
       !newSecretName ||
       !newSecretValue ||
       newSecretMinScore < 0 ||
-      newSecretMinScore > 100
+      newSecretMinScore > 150
     ) {
       setError("Please fill all fields correctly.");
       return;
     }
 
-    const newSecret: Secret = {
-      id: Date.now().toString(),
-      name: newSecretName,
-      value: newSecretValue,
-      type: newSecretType,
-      minScore: newSecretMinScore,
-    };
+    e.preventDefault();
+    const prefix = newSecretName;
+    const db = new Database({ signer });
+    const { meta: create } = await db
+      .prepare(
+        `CREATE TABLE ${prefix} (id integer primary key,name text,value text,type text, BuilderScore integer);`
+      )
+      .run();
+    await create.txn?.wait();
+    let tableName = create.txn?.names[0];
+    console.log(tableName);
+    const { meta: insert } = await db
+      .prepare(
+        `INSERT INTO ${tableName} (name,value,type, BuilderScore) VALUES (?, ?, ?, ?)`
+      )
+      .bind(newSecretName, newSecretValue, newSecretType, newSecretMinScore)
+      .run();
+    await insert.txn?.wait();
+    console.log(insert.txn?.names);
+    console.log("Data inserted successfully");
+    setError("");
 
-    setSecrets([...secrets, newSecret]);
-    setNewSecretName("");
-    setNewSecretValue("");
-    setNewSecretMinScore(0);
+    router.push(`/share/${tableName}`);
   };
 
   return (
@@ -88,7 +108,7 @@ export default function Component() {
           <div className="mb-6">
             <Label>Your Builder Score</Label>
             <div className="flex items-center space-x-2 mt-2">
-              <div className="text-2xl font-bold">{userScore}</div>
+              <div className="text-2xl font-bold">so: {userScore}</div>
               {userScore > 80 ? (
                 <CheckCircle2 className="text-green-500" />
               ) : (
@@ -96,7 +116,6 @@ export default function Component() {
               )}
             </div>
           </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -144,7 +163,7 @@ export default function Component() {
               </div>
             </div>
             {error && <p className="text-red-500">{error}</p>}
-            <Button type="submit">Add New Secret</Button>
+            <Button type="submit">submit</Button>
           </form>
         </CardContent>
         <CardFooter></CardFooter>
