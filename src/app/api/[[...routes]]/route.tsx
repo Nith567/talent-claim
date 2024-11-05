@@ -14,9 +14,11 @@ import {
   getFrameHtmlResponse,
   getFrameMessage,
 } from "@coinbase/onchainkit";
+import dotenv from "dotenv";
 import axios from "axios";
 import { fetchCredentialScore } from "../../../../utils/talentApi";
 import { farcasterDataFrogMiddleware } from "@airstack/frames";
+
 const farcasterDataMiddleware = farcasterDataFrogMiddleware({
   apiKey: process.env.AIRSTACK_API_KEY || "18e5882bb4bf142b680a7f5",
   features: {
@@ -24,6 +26,8 @@ const farcasterDataMiddleware = farcasterDataFrogMiddleware({
   },
   env: "dev",
 });
+
+dotenv.config();
 
 interface UserDetails {
   profileName?: string | null;
@@ -85,6 +89,9 @@ app.frame("/score", farcasterDataMiddleware, async (c) => {
       <Button key="sign" action="/sign">
         SD
       </Button>,
+      <Button.Link key="key" href={`${ethAddress}`}>
+        ethaddress
+      </Button.Link>,
     ],
   });
 });
