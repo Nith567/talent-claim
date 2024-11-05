@@ -82,16 +82,13 @@ app.frame("/score", farcasterDataMiddleware, async (c) => {
     action: "`/score/${ethAddress}`",
     image: (
       <div style={{ color: "white", display: "flex", fontSize: 60 }}>
-        helloo morning
+        helloo morning {ethAddress ? ethAddress : "no address"}
       </div>
     ),
     intents: [
       <Button key="sign" action="/sign">
         SD
       </Button>,
-      <Button.Link key="key" href={`${ethAddress}`}>
-        ethaddress
-      </Button.Link>,
     ],
   });
 });
