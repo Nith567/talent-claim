@@ -63,10 +63,10 @@ interface UserDetails {
 //   },
 //   verify: "silent",
 // });
-export const app = new Frog({
+const app = new Frog({
   assetsPath: "/",
   basePath: "/api",
-  title: "Talent Protocol",
+  title: "Talent BuilderScore",
   headers: {
     "cache-control":
       "no-store, no-cache, must-revalidate, proxy-revalidate max-age=0, s-maxage=0",
@@ -333,7 +333,7 @@ app.frame("/finish", async (c) => {
   });
 });
 
-devtools(app, { serveStatic });
+// devtools(app, { serveStatic });
 
 export const GET = handle(app);
 export const POST = handle(app);
