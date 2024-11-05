@@ -21,7 +21,7 @@
     "encoding": "^0.1.13",
     "@coinbase/onchainkit": "0.4.3",
     "ethers": "^5.2.0",
-    "frog": "latest",
+    "frog": "^0.17.4",
     "hono": "^4",
     "@tableland/sdk": "^6.0.0",
     "lucide-react": "^0.350.0",
