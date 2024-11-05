@@ -50,21 +50,40 @@ interface UserDetails {
   }[];
 }
 
-const app = new Frog({
+// const app = new Frog({
+//   basePath: "/api",
+//   title: "talent Protocol",
+//   hub: {
+//     apiUrl: "https://hubs.airstack.xyz",
+//     fetchOptions: {
+//       headers: {
+//         "x-airstack-hubs":"18e5882bb4bf142b680a7f5",
+//       },
+//     },
+//   },
+//   verify: "silent",
+// });
+export const app = new Frog({
+  assetsPath: "/",
   basePath: "/api",
-  title: "talent Protocol",
+  title: "Talent Protocol",
+  headers: {
+    "cache-control":
+      "no-store, no-cache, must-revalidate, proxy-revalidate max-age=0, s-maxage=0",
+  },
+  imageOptions: {
+    height: 1024,
+    width: 1024,
+  },
   hub: {
     apiUrl: "https://hubs.airstack.xyz",
     fetchOptions: {
       headers: {
-        "x-airstack-hubs":
-          process.env.AIRSTACK_API_KEY || "18e5882bb4bf142b680a7f5",
+        "x-airstack-hubs": "18e5882bb4bf142b680a7f5",
       },
     },
   },
-  verify: "silent",
 });
-
 //localhost:3000/api/talentscore-frame/apikey_421614_1038
 
 app.frame("/score", farcasterDataMiddleware, async (c) => {
