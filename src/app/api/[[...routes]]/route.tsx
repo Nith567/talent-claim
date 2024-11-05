@@ -98,7 +98,7 @@ app.frame("/score", farcasterDataMiddleware, async (c) => {
     userDetails?.connectedAddresses?.[0]?.address ??
     null;
   return c.res({
-    action: "`/score/${ethAddress}`",
+    action: `/score/${ethAddress}`,
     image: (
       <div style={{ color: "white", display: "flex", fontSize: 60 }}>
         helloo morning {ethAddress ? ethAddress : "no address"}
