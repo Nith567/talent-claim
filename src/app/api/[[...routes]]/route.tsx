@@ -73,7 +73,11 @@ const app = new Frog({
 
 app.frame("/", (c) => {
   return c.res({
-    image: "/initial-image",
+    image: (
+      <div style={{ color: "white", display: "flex", fontSize: 60 }}>
+        helloo morning
+      </div>
+    ),
     intents: [
       <Button key="action" action="/my-passport">
         Passport Score
