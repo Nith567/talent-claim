@@ -19,14 +19,6 @@ import axios from "axios";
 import { fetchCredentialScore } from "../../../../utils/talentApi";
 import { farcasterDataFrogMiddleware } from "@airstack/frames";
 
-const farcasterDataMiddleware = farcasterDataFrogMiddleware({
-  apiKey: process.env.AIRSTACK_API_KEY || "18e5882bb4bf142b680a7f5",
-  features: {
-    userDetails: {},
-  },
-  env: "dev",
-});
-
 dotenv.config();
 
 interface UserDetails {
@@ -49,20 +41,14 @@ interface UserDetails {
     timestamp: string;
   }[];
 }
+const farcasterDataMiddleware = farcasterDataFrogMiddleware({
+  apiKey: process.env.AIRSTACK_API_KEY || "18e5882bb4bf142b680a7f5",
+  features: {
+    userDetails: {},
+  },
+  env: "dev",
+});
 
-// const app = new Frog({
-//   basePath: "/api",
-//   title: "talent Protocol",
-//   hub: {
-//     apiUrl: "https://hubs.airstack.xyz",
-//     fetchOptions: {
-//       headers: {
-//         "x-airstack-hubs":"18e5882bb4bf142b680a7f5",
-//       },
-//     },
-//   },
-//   verify: "silent",
-// });
 const app = new Frog({
   assetsPath: "/",
   basePath: "/api",
@@ -84,9 +70,24 @@ const app = new Frog({
     },
   },
 });
+
+app.frame("/", (c) => {
+  return c.res({
+    image: "/initial-image",
+    intents: [
+      <Button key="action" action="/my-passport">
+        Passport Score
+      </Button>,
+      <Button.Link key="href" href="https://passport.talentprotocol.com/signin">
+        Register
+      </Button.Link>,
+    ],
+  });
+});
+
 //localhost:3000/api/talentscore-frame/apikey_421614_1038
 
-app.frame("/score", farcasterDataMiddleware, async (c) => {
+app.frame("/my-passport", farcasterDataMiddleware, async (c) => {
   const userDetails = c.var?.userDetails as UserDetails;
 
   const fid = c.frameData?.fid ?? null;
