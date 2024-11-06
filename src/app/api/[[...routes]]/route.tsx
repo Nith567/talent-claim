@@ -72,7 +72,27 @@ app.frame("/", (c) => {
   return c.res({
     image: (
       <div style={{ color: "white", display: "flex", fontSize: 60 }}>
-        helloo morning
+        helloo morniwng
+      </div>
+    ),
+    intents: [
+      <Button key="action" action="/score">
+        Passport Score
+      </Button>,
+      <Button key="action" action="/my-passport">
+        Passport Score
+      </Button>,
+      <Button.Link key="href" href="https://passport.talentprotocol.com/signin">
+        Register
+      </Button.Link>,
+    ],
+  });
+});
+app.frame("/score", (c) => {
+  return c.res({
+    image: (
+      <div style={{ color: "white", display: "flex", fontSize: 60 }}>
+        helloo morniwng
       </div>
     ),
     intents: [
