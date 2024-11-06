@@ -2,8 +2,6 @@
 
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
-// import { neynar } from "frog/hubs";
-import { neynar } from "frog/middlewares";
 import { handle } from "frog/next";
 import { serveStatic } from "frog/serve-static";
 import { tableApi } from "../../../../utils/table";
@@ -17,9 +15,8 @@ import {
 import dotenv from "dotenv";
 import axios from "axios";
 import { fetchCredentialScore } from "../../../../utils/talentApi";
-import { farcasterDataFrogMiddleware } from "@airstack/frames";
 
-dotenv.config();
+import { farcasterDataFrogMiddleware } from "@airstack/frames";
 
 interface UserDetails {
   profileName?: string | null;
@@ -42,7 +39,7 @@ interface UserDetails {
   }[];
 }
 const farcasterDataMiddleware = farcasterDataFrogMiddleware({
-  apiKey: process.env.AIRSTACK_API_KEY || "18e5882bb4bf142b680a7f5",
+  apiKey: process.env.AIRSTACK_API_KEY,
   features: {
     userDetails: {},
   },
@@ -112,28 +109,6 @@ app.frame("/my-passport", farcasterDataMiddleware, async (c) => {
     intents: [
       <Button key="sign" action="/sign">
         SD
-      </Button>,
-    ],
-  });
-});
-app.frame("/score3", async (c) => {
-  const { buttonValue, inputText, status } = c;
-  const body = await c.req.json();
-  const validation = await getFrameMessage(body, {
-    neynarApiKey: process.env.NEXT_PUBLIC_NEYNAR_API_KEY,
-  });
-  const mainAddress = validation?.message?.interactor.verified_accounts[0];
-
-  return c.res({
-    action: "/build",
-    image: (
-      <div style={{ color: "white", display: "flex", fontSize: 60 }}>
-        {mainAddress}
-      </div>
-    ),
-    intents: [
-      <Button key="sign" action="/sign">
-        scosdfdssdfsdf
       </Button>,
     ],
   });
@@ -268,73 +243,6 @@ app.frame("/passport", async (c) => {
         buddy
       </Button.Signature>,
     ],
-  });
-});
-app.frame("/build", async (c) => {
-  const apiKey = process.env.NEXT_PUBLIC_TALENT_PROTOCOL_API_KEY;
-  const body: FrameRequest = await c.req.json();
-  console.log(process.env.NEXT_PUBLIC_NEYNAR_API_KEY);
-  const { isValid, message } = await getFrameMessage(body, {
-    neynarApiKey: process.env.NEXT_PUBLIC_NEYNAR_API_KEY,
-  });
-  const wallets = message?.interactor.verified_accounts;
-  console.log(wallets);
-  let res = fetchCredentialScore("0xa2a9055a014857d6c1e8f1bdd8682b6459c5fa85");
-  return c.res({
-    action: "/finish",
-    image: (
-      <div
-        style={{
-          display: "flex",
-          height: "100%",
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-          backgroundImage: "linear-gradient(to bottom, #dbf4ff, #fff1f1)",
-          fontSize: 80,
-          fontWeight: 700,
-          textAlign: "center",
-        }}
-      >
-        {res}
-        <p
-          style={{
-            backgroundImage:
-              "linear-gradient(90deg, rgb(0, 124, 240), rgb(0, 223, 216))",
-            backgroundClip: "text",
-            color: "transparent",
-            fontSize: 80,
-            fontWeight: 700,
-            margin: 0,
-          }}
-        ></p>
-      </div>
-    ),
-    intents: [
-      <Button.Signature key={"finsih"} target="/sign">
-        Sign
-      </Button.Signature>,
-    ],
-  });
-});
-
-app.frame("/finish", async (c) => {
-  const apiKey = process.env.NEXT_PUBLIC_TALENT_PROTOCOL_API_KEY;
-  const body: FrameRequest = await c.req.json();
-  console.log(process.env.NEXT_PUBLIC_NEYNAR_API_KEY);
-  const { isValid, message } = await getFrameMessage(body, {
-    neynarApiKey: process.env.NEXT_PUBLIC_NEYNAR_API_KEY,
-  });
-  const wallets = message?.interactor.verified_accounts;
-  console.log(wallets);
-  const { transactionId } = c;
-  return c.res({
-    image: (
-      <div style={{ color: "white", display: "flex", fontSize: 60 }}>
-        Signature: {transactionId}
-      </div>
-    ),
   });
 });
 
