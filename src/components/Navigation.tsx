@@ -39,12 +39,6 @@ export function Navigation() {
               >
                 Upload
               </Link>
-              <Link
-                className="text-sm font-medium hover:underline underline-offset-4"
-                href="#"
-              >
-                About
-              </Link>
             </nav>
             <ConnectButton />
           </>

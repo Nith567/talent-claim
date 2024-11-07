@@ -1,6 +1,6 @@
 import axios from "axios";
 
-interface ApiData {
+export interface ApiData {
   BuilderScore: string;
   id: number;
   name: string;

@@ -51,8 +51,7 @@ export default function Component() {
   const [newSecretType, setNewSecretType] = useState<"apikey" | "secret">(
     "apikey"
   );
-  const [newSecretMinScore, setNewSecretMinScore] = useState(1);
-  const [userScore, setUserScore] = useState(0);
+  const [newSecretMinScore, setNewSecretMinScore] = useState(50);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -64,7 +63,7 @@ export default function Component() {
       !newSecretName ||
       !newSecretValue ||
       newSecretMinScore < 0 ||
-      newSecretMinScore > 150
+      newSecretMinScore > 180
     ) {
       setError("Please fill all fields correctly.");
       return;
@@ -105,17 +104,6 @@ export default function Component() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-6">
-            <Label>Your Builder Score</Label>
-            <div className="flex items-center space-x-2 mt-2">
-              <div className="text-2xl font-bold">so: {userScore}</div>
-              {userScore > 80 ? (
-                <CheckCircle2 className="text-green-500" />
-              ) : (
-                <AlertCircle className="text-yellow-500" />
-              )}
-            </div>
-          </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -156,7 +144,7 @@ export default function Component() {
                 <Input
                   id="minScore"
                   type="number"
-                  max="100"
+                  max="160"
                   value={newSecretMinScore}
                   onChange={(e) => setNewSecretMinScore(Number(e.target.value))}
                 />
