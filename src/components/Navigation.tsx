@@ -16,7 +16,7 @@ export function Navigation() {
   return (
     <header className="px-4 lg:px-6 h-20 flex items-center justify-between">
       <div className="flex items-center">
-        <Link className="flex items-center justify-center" href="#">
+        <Link className="flex items-center justify-center" href="/">
           <Image
             src="/talentbuild.jpg"
             alt="App Logo"
