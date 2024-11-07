@@ -12,12 +12,12 @@ export default function Home({ params }: { params: { tableName: string } }) {
   const tableName = params.tableName;
 
   const copyToClipboard = async () => {
-    const tableName = params.tableName;
-    const score = await fetchCredentialScore(
-      account?.address as `0x ${string}`
-    );
-    const data = await tableApi(tableName);
     try {
+      const tableName = params.tableName;
+      const score = await fetchCredentialScore(
+        account?.address as `0x ${string}`
+      );
+      const data = await tableApi(tableName);
       if (score >= data[0].BuilderScore) {
         await navigator.clipboard.writeText(data[0].value);
         alert("copied to clipboard!");
